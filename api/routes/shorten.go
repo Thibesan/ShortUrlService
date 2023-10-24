@@ -2,6 +2,10 @@ package routes
 
 import (
 	"time"
+
+	"github.com/Thibesan/ShortUrlService/helpers"
+	"github.com/asaskevich/govalidator"
+	"github.com/gofiber/fiber/v2"
 )
 
 
@@ -23,8 +27,8 @@ func ShortenURL(c *fiber.Ctx) error {
 	body := new(request)
 	
 	if err := c.BodyParser(&body); err!= nil {
-		return c.Status(fiber.StatusBadRequest)
-						.JSON(fiber.map{"error":"cannot parse JSON"})
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"error": "cannot parse JSON"})
 	}
 
 	//Rate Limiting
@@ -37,16 +41,17 @@ func ShortenURL(c *fiber.Ctx) error {
 
 	//Check if URL is valid
 	if !govalidator.IsURL(body.URL){
-		return c.status(fiber.StatusBadRequest)
-						.JSON(fiber.map{"error":"Invalid URL"})
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"error":"Invalid URL"})
 	}
 
 	//Check LocalHost domain error (inf loop if source URL is modified)
 	if !helpers.RemoveDomainError(body.URL){
-		return c.Status(fiber.StatusServiceUnavailable)
-						.JSON(fiber.map{"error":"Requested Resource Cannot Be Accessed :)"})
+		return c.Status(fiber.StatusServiceUnavailable).JSON(fiber.Map{"error":"Requested Resource Cannot Be Accessed :)"})
 	}
-
+	
 	//Enforce HTTP, SSL
 	body.URL = helpers.EnforceHTTP(body.URL)
+
+		return c.Status(fiber.StatusOK).JSON("Hello World")
 }

@@ -5,7 +5,7 @@ import (
 	"strings"
 )
 
-func EnforceHTTP() string {
+func EnforceHTTP(url string) string {
 	if url[:4] != "http" { //String.Slice, check for HTTP Header
 		return "http://" + url
 	}

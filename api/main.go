@@ -5,13 +5,14 @@ import (
 	"log"
 	"os"
 
-	"github.com/goFiber/fiber/v2"
-	"github.com/goFiber/fiber/v2/middleware/logger"
+	"github.com/Thibesan/ShortUrlService/routes"
+	"github.com/gofiber/fiber/v2"
+	"github.com/gofiber/fiber/v2/middleware/logger"
 	"github.com/joho/godotenv"
 )
 
 func setupRoutes(app *fiber.App) {
-	app.Get("/:url", routes.ResolveURL)
+	//app.Get("/:url", routes.ResolveURL)
 	app.Post("/api/v1", routes.ShortenURL)
 }
 
@@ -19,11 +20,11 @@ func main() {
 	err := godotenv.Load()
 
 	if err!=nil {
-		fmt.println(err)
+		fmt.Println(err)
 	}
 
 	app := fiber.New()
-	app.use(logger.New())
+	app.Use(logger.New())
 	setupRoutes(app)
-	log.Fatal(app.listen(os.Getenv("APP_PORT")))
+	log.Fatal(app.Listen(os.Getenv("APP_PORT")))
 }
